@@ -1,5 +1,4 @@
 FROM nginx:alpine
-RUN apk add --no-cache curl
-RUN curl -L -o /usr/share/nginx/html/index.html https://raw.githubusercontent.com/IDEASCRIPTO/generador-landing/refs/heads/main/index.html
+COPY index.html /usr/share/nginx/html/index.html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
