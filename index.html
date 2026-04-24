@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Generador de Landing Pages</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --verde: #1D9E75;
+  --verde-dark: #0F6E56;
+  --verde-light: #E1F5EE;
+  --verde-mid: #9FE1CB;
+  --texto: #111;
+  --gris: #666;
+  --borde: #e8e8e8;
+  --fondo: #fafafa;
+  --blanco: #fff;
+  --rojo: #E24B4A;
+  --amarillo: #EF9F27;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Sora', sans-serif;
+  background: var(--fondo);
+  color: var(--texto);
+  min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+.header {
+  background: var(--blanco);
+  border-bottom: 1px solid var(--borde);
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-icon {
+  width: 36px;
+  height: 36px;
+  background: var(--verde);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+.logo-text {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--texto);
+}
+.logo-sub {
+  font-size: 11px;
+  color: var(--gris);
+  font-weight: 400;
+}
+.header-badge {
+  background: var(--verde-light);
+  color: var(--verde-dark);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 20px;
+}
+
+/* ===== PROGRESS BAR ===== */
+.progress-wrap {
+  background: var(--blanco);
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--borde);
+}
+.progress-steps {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  max-width: 600px;
+  margin: 0 auto;
+}
+.ps {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+.ps:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  top: 14px;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: var(--borde);
+  z-index: 0;
+}
+.ps.done:not(:last-child)::after { background: var(--verde); }
+.ps-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 600;
+  z-index: 1;
+  border: 2px solid var(--borde);
+  background: var(--blanco);
+  color: var(--gris);
+  transition: all .25s;
+}
+.ps.active .ps-dot { background: var(--verde); border-color: var(--verde); color: #fff; }
+.ps.done .ps-dot { background: var(--verde-light); border-color: var(--verde); color: var(--verde-dark); }
+.ps-label {
+  font-size: 10px;
+  color: var(--gris);
+  margin-top: 4px;
+  text-align: center;
+  font-weight: 500;
+}
+.ps.active .ps-label { color: var(--verde); font-weight: 600; }
+
+/* ===== MAIN ===== */
+.main {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 20px 16px 100px;
+}
+
+/* ===== PANEL ===== */
+.panel { display: none; }
+.panel.active { display: block; }
+
+.panel-title {
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+.panel-sub {
+  font-size: 13px;
+  color: var(--gris);
+  margin-bottom: 24px;
+  line-height: 1.5;
+}
+
+/* ===== FIELDS ===== */
+.field { margin-bottom: 18px; }
+.field label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--texto);
+}
+.field .hint {
+  font-size: 11px;
+  color: var(--gris);
+  margin-top: 5px;
+  line-height: 1.4;
+}
+.field input,
+.field textarea,
+.field select {
+  width: 100%;
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  padding: 11px 14px;
+  font-size: 14px;
+  font-family: 'Sora', sans-serif;
+  color: var(--texto);
+  background: var(--blanco);
+  outline: none;
+  transition: border-color .15s;
+  appearance: none;
+}
+.field input:focus,
+.field textarea:focus,
+.field select:focus { border-color: var(--verde); }
+.field textarea { resize: vertical; min-height: 100px; line-height: 1.6; }
+
+/* Upload */
+.upload-zone {
+  border: 2px dashed var(--borde);
+  border-radius: 12px;
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .2s;
+  background: var(--blanco);
+  position: relative;
+}
+.upload-zone:hover, .upload-zone.drag { border-color: var(--verde); background: var(--verde-light); }
+.upload-zone input { position: absolute; inset: 0; opacity: 0; cursor: pointer; width: 100%; height: 100%; }
+.upload-icon { font-size: 32px; margin-bottom: 8px; }
+.upload-main { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.upload-sub { font-size: 12px; color: var(--gris); }
+
+.img-preview {
+  display: none;
+  border-radius: 10px;
+  overflow: hidden;
+  margin-top: 10px;
+  position: relative;
+  border: 1px solid var(--borde);
+}
+.img-preview img { width: 100%; max-height: 200px; object-fit: cover; display: block; }
+.img-remove {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(0,0,0,.55);
+  color: #fff;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Multiple images */
+.multi-upload { margin-top: 10px; }
+.img-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 10px; }
+.img-thumb {
+  position: relative;
+  border-radius: 8px;
+  overflow: hidden;
+  aspect-ratio: 1;
+  border: 1px solid var(--borde);
+}
+.img-thumb img { width: 100%; height: 100%; object-fit: cover; }
+.img-thumb .rm { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,.55); color: #fff; border: none; border-radius: 50%; width: 22px; height: 22px; font-size: 12px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.add-more-btn {
+  width: 100%;
+  padding: 10px;
+  border: 1.5px dashed var(--borde);
+  border-radius: 8px;
+  background: var(--blanco);
+  font-size: 13px;
+  color: var(--verde);
+  font-weight: 600;
+  cursor: pointer;
+  margin-top: 8px;
+  font-family: 'Sora', sans-serif;
+  transition: all .15s;
+}
+.add-more-btn:hover { border-color: var(--verde); background: var(--verde-light); }
+
+/* Nicho tags */
+.tags-wrap { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+.tag {
+  border: 1.5px solid var(--borde);
+  border-radius: 20px;
+  padding: 7px 14px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  background: var(--blanco);
+  color: var(--gris);
+  user-select: none;
+}
+.tag.sel { background: var(--verde-light); border-color: var(--verde); color: var(--verde-dark); font-weight: 600; }
+
+/* Secciones opcionales */
+.secciones-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-top: 10px;
+}
+.sec-item {
+  border: 1.5px solid var(--borde);
+  border-radius: 12px;
+  padding: 14px;
+  cursor: pointer;
+  transition: all .15s;
+  background: var(--blanco);
+  user-select: none;
+}
+.sec-item.sel { border-color: var(--verde); background: var(--verde-light); }
+.sec-item-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.sec-icon { font-size: 20px; }
+.sec-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 6px;
+  border: 2px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  transition: all .15s;
+}
+.sec-item.sel .sec-check { background: var(--verde); border-color: var(--verde); color: #fff; }
+.sec-name { font-size: 13px; font-weight: 600; color: var(--texto); margin-bottom: 2px; }
+.sec-desc { font-size: 11px; color: var(--gris); line-height: 1.4; }
+
+/* Toggle opciones de sección */
+.sec-options {
+  display: none;
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--borde);
+}
+.sec-item.sel .sec-options { display: block; }
+.sec-opt-label { font-size: 11px; font-weight: 600; color: var(--gris); margin-bottom: 4px; }
+.sec-opt-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+.sec-opt-tag {
+  font-size: 10px;
+  padding: 3px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--borde);
+  cursor: pointer;
+  background: var(--blanco);
+  color: var(--gris);
+  font-family: 'Sora', sans-serif;
+  transition: all .15s;
+}
+.sec-opt-tag.sel { background: var(--verde); border-color: var(--verde); color: #fff; }
+
+/* Tono selector */
+.tono-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+.tono-item {
+  border: 1.5px solid var(--borde);
+  border-radius: 10px;
+  padding: 12px;
+  cursor: pointer;
+  transition: all .15s;
+  background: var(--blanco);
+  text-align: center;
+}
+.tono-item.sel { border-color: var(--verde); background: var(--verde-light); }
+.tono-emoji { font-size: 22px; margin-bottom: 4px; }
+.tono-name { font-size: 12px; font-weight: 600; }
+.tono-desc { font-size: 10px; color: var(--gris); margin-top: 2px; }
+
+/* Resumen */
+.summary-card {
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+.summary-card h4 {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--gris);
+  text-transform: uppercase;
+  letter-spacing: .07em;
+  margin-bottom: 10px;
+}
+.sum-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  font-size: 13px;
+  margin-bottom: 8px;
+  gap: 12px;
+}
+.sum-row span:first-child { color: var(--gris); flex-shrink: 0; }
+.sum-row span:last-child { font-weight: 600; text-align: right; }
+.secs-preview { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+.sec-pill {
+  background: var(--verde-light);
+  color: var(--verde-dark);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+}
+
+/* Generating */
+.gen-wrap { text-align: center; padding: 40px 0; }
+.gen-spinner {
+  width: 56px;
+  height: 56px;
+  border: 4px solid var(--verde-light);
+  border-top-color: var(--verde);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin: 0 auto 20px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.gen-title { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+.gen-sub { font-size: 13px; color: var(--gris); margin-bottom: 24px; }
+.progress-track {
+  height: 6px;
+  background: var(--verde-light);
+  border-radius: 3px;
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.progress-fill {
+  height: 100%;
+  background: var(--verde);
+  border-radius: 3px;
+  width: 0;
+  transition: width .5s ease;
+}
+.gen-step { font-size: 12px; color: var(--gris); min-height: 18px; }
+
+/* Success */
+.success-wrap { text-align: center; padding: 32px 0; }
+.success-icon { font-size: 56px; margin-bottom: 16px; }
+.success-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+.success-sub { font-size: 14px; color: var(--gris); margin-bottom: 28px; line-height: 1.6; }
+.result-actions { display: flex; flex-direction: column; gap: 10px; }
+.act-btn {
+  padding: 14px;
+  border-radius: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  border: none;
+  transition: all .15s;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+}
+.act-btn.primary { background: var(--verde); color: #fff; }
+.act-btn.primary:hover { background: var(--verde-dark); }
+.act-btn.secondary { background: var(--blanco); color: var(--texto); border: 1.5px solid var(--borde); }
+.act-btn.secondary:hover { background: var(--fondo); }
+
+/* ===== NAV BOTTOM ===== */
+.nav-bottom {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--blanco);
+  border-top: 1px solid var(--borde);
+  padding: 12px 16px;
+  display: flex;
+  gap: 10px;
+  max-width: 680px;
+  margin: 0 auto;
+}
+.btn-back {
+  flex: 1;
+  padding: 13px;
+  border-radius: 12px;
+  border: 1.5px solid var(--borde);
+  background: var(--blanco);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  color: var(--gris);
+  transition: all .15s;
+}
+.btn-back:hover { background: var(--fondo); }
+.btn-next {
+  flex: 2;
+  padding: 13px;
+  border-radius: 12px;
+  border: none;
+  background: var(--verde);
+  color: #fff;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  font-family: 'Sora', sans-serif;
+  transition: all .15s;
+}
+.btn-next:hover { background: var(--verde-dark); }
+.btn-next:disabled { background: var(--borde); color: var(--gris); cursor: not-allowed; }
+
+/* ===== DIVIDER ===== */
+.sec-divider {
+  height: 1px;
+  background: var(--borde);
+  margin: 24px 0;
+}
+
+/* ===== ALERT ===== */
+.alert {
+  background: #FFF3CD;
+  border: 1px solid #FFE082;
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: #7A5C00;
+  margin-bottom: 16px;
+  line-height: 1.5;
+}
+.alert strong { font-weight: 600; }
+
+/* ===== RESPONSIVE PC ===== */
+@media (min-width: 640px) {
+  .main { padding: 32px 24px 100px; }
+  .secciones-grid { grid-template-columns: repeat(3, 1fr); }
+  .tono-grid { grid-template-columns: repeat(4, 1fr); }
+  .panel-title { font-size: 24px; }
+  .img-grid { grid-template-columns: repeat(5, 1fr); }
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="logo">
+    <div class="logo-icon">🚀</div>
+    <div>
+      <div class="logo-text">LandingAI</div>
+      <div class="logo-sub">Generador automático</div>
+    </div>
+  </div>
+  <div class="header-badge">✨ Powered by Claude</div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-steps">
+    <div class="ps active" id="ps1">
+      <div class="ps-dot" id="dot1">1</div>
+      <div class="ps-label" id="lbl1">Producto</div>
+    </div>
+    <div class="ps" id="ps2">
+      <div class="ps-dot" id="dot2">2</div>
+      <div class="ps-label" id="lbl2">Imágenes</div>
+    </div>
+    <div class="ps" id="ps3">
+      <div class="ps-dot" id="dot3">3</div>
+      <div class="ps-label" id="lbl3">Secciones</div>
+    </div>
+    <div class="ps" id="ps4">
+      <div class="ps-dot" id="dot4">4</div>
+      <div class="ps-label" id="lbl4">Estilo</div>
+    </div>
+    <div class="ps" id="ps5">
+      <div class="ps-dot" id="dot5">5</div>
+      <div class="ps-label" id="lbl5">Generar</div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ===== PANEL 1: PRODUCTO ===== -->
+  <div class="panel active" id="panel1">
+    <div class="panel-title">¿Qué producto vas a vender?</div>
+    <div class="panel-sub">La IA analizará tu producto y creará el copy perfecto para Ecuador y Latinoamérica.</div>
+
+    <div class="field">
+      <label>Nombre del producto *</label>
+      <input type="text" id="nombre" placeholder="ej. Calefactor Portátil 400W" oninput="checkP1()">
+    </div>
+
+    <div class="field">
+      <label>Precio de venta *</label>
+      <input type="text" id="precio" placeholder="ej. $29.99" oninput="checkP1()">
+    </div>
+
+    <div class="field">
+      <label>Precio antes (opcional — para mostrar descuento)</label>
+      <input type="text" id="precio_antes" placeholder="ej. $59.99">
+    </div>
+
+    <div class="field">
+      <label>Descripción del producto *</label>
+      <textarea id="descripcion" placeholder="Describe tu producto: qué hace, para quién es, qué problema resuelve, características especiales..." oninput="checkP1()"></textarea>
+      <div class="hint">Mientras más detalles des, mejor será el copy generado por la IA.</div>
+    </div>
+
+    <div class="field">
+      <label>Nicho / Categoría</label>
+      <div class="tags-wrap" id="nichoTags">
+        <div class="tag" onclick="selTag(this,'nicho')">🏠 Hogar</div>
+        <div class="tag" onclick="selTag(this,'nicho')">💪 Salud</div>
+        <div class="tag" onclick="selTag(this,'nicho')">👶 Juguetes</div>
+        <div class="tag" onclick="selTag(this,'nicho')">💄 Belleza</div>
+        <div class="tag" onclick="selTag(this,'nicho')">📱 Tecnología</div>
+        <div class="tag" onclick="selTag(this,'nicho')">🐾 Mascotas</div>
+        <div class="tag" onclick="selTag(this,'nicho')">🏋️ Deporte</div>
+        <div class="tag" onclick="selTag(this,'nicho')">🍳 Cocina</div>
+        <div class="tag" onclick="selTag(this,'nicho')">👗 Moda</div>
+        <div class="tag" onclick="selTag(this,'nicho')">🧘 Bienestar</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Mercado objetivo</label>
+      <select id="mercado">
+        <option value="Ecuador">🇪🇨 Ecuador</option>
+        <option value="Colombia">🇨🇴 Colombia</option>
+        <option value="Perú">🇵🇪 Perú</option>
+        <option value="México">🇲🇽 México</option>
+        <option value="Latinoamérica">🌎 Toda Latinoamérica</option>
+      </select>
+    </div>
+
+    <div class="field">
+      <label>Número de WhatsApp para pedidos</label>
+      <input type="text" id="whatsapp" placeholder="ej. +593987654321">
+      <div class="hint">Los botones de la landing redirigen a este número.</div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL 2: IMÁGENES ===== -->
+  <div class="panel" id="panel2">
+    <div class="panel-title">Imágenes del producto</div>
+    <div class="panel-sub">Sube hasta 5 fotos del hero. Si no tienes, la IA las genera automáticamente.</div>
+
+    <div class="field">
+      <label>Fotos del producto para el hero</label>
+      <div class="upload-zone" id="heroZone" ondragover="dragOver(event,'heroZone')" ondragleave="dragLeave('heroZone')" ondrop="dropFiles(event,'hero')">
+        <input type="file" accept="image/*" multiple onchange="handleHeroImgs(event)">
+        <div class="upload-icon">📸</div>
+        <div class="upload-main">Arrastra tus fotos aquí</div>
+        <div class="upload-sub">JPG, PNG o WEBP · Hasta 5 fotos · Opcional</div>
+      </div>
+      <div class="img-grid" id="heroGrid"></div>
+      <button class="add-more-btn" id="addMoreBtn" style="display:none" onclick="document.querySelector('#heroZone input').click()">+ Añadir más fotos</button>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <div class="field">
+      <label>Foto para la sección "Problema" <span style="color:var(--gris);font-weight:400">(opcional)</span></label>
+      <div class="upload-zone" id="problemaZone">
+        <input type="file" accept="image/*" onchange="handleSingleImg(event,'problemaZone','problemaPreview','problemaB64')">
+        <div class="upload-icon">😟</div>
+        <div class="upload-main">Imagen que muestre el problema del cliente</div>
+        <div class="upload-sub">Si no subes, la IA la genera</div>
+      </div>
+      <div class="img-preview" id="problemaPreview">
+        <img id="problemaImg" src="" alt="">
+        <button class="img-remove" onclick="removeImg('problemaPreview','problemaB64')">×</button>
+      </div>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <div class="field">
+      <label>Fotos de clientes para reviews <span style="color:var(--gris);font-weight:400">(opcional)</span></label>
+      <div class="upload-zone" id="reviewZone">
+        <input type="file" accept="image/*" multiple onchange="handleReviewImgs(event)">
+        <div class="upload-icon">⭐</div>
+        <div class="upload-main">Fotos reales de tus clientes</div>
+        <div class="upload-sub">Si no subes, la IA crea fotos realistas</div>
+      </div>
+      <div class="img-grid" id="reviewGrid"></div>
+    </div>
+
+    <div class="sec-divider"></div>
+
+    <div class="field">
+      <label>Video del producto <span style="color:var(--gris);font-weight:400">(opcional)</span></label>
+      <input type="text" id="video_url" placeholder="https://youtube.com/watch?v=... o https://tiktok.com/...">
+      <div class="hint">Pega el link de YouTube, TikTok o cualquier video. Se incrusta automáticamente en la landing.</div>
+    </div>
+
+    <div class="alert">
+      <strong>💡 Tip:</strong> Las imágenes que no subas serán creadas automáticamente por DALL-E con el estilo de tu producto. Siempre puedes reemplazarlas después.
+    </div>
+  </div>
+
+  <!-- ===== PANEL 3: SECCIONES ===== -->
+  <div class="panel" id="panel3">
+    <div class="panel-title">¿Qué secciones quieres?</div>
+    <div class="panel-sub">Activa o desactiva cada sección. Las marcadas en verde se incluyen en tu landing.</div>
+
+    <div class="secciones-grid" id="seccionesGrid">
+
+      <div class="sec-item sel" data-sec="barra_urgencia" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">📢</span>
+          <div class="sec-check">✓</div>
+        </div>
+        <div class="sec-name">Barra urgencia</div>
+        <div class="sec-desc">Barra superior con oferta y envío gratis</div>
+      </div>
+
+      <div class="sec-item sel" data-sec="hero" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">🎯</span>
+          <div class="sec-check">✓</div>
+        </div>
+        <div class="sec-name">Hero principal</div>
+        <div class="sec-desc">Título, subtítulo, precio y CTA</div>
+        <div class="sec-options" onclick="e=>e.stopPropagation()">
+          <div class="sec-opt-label">Estilo de imágenes</div>
+          <div class="sec-opt-tags">
+            <span class="sec-opt-tag sel" onclick="toggleOpt(this)">1 imagen</span>
+            <span class="sec-opt-tag" onclick="toggleOpt(this)">Carrusel</span>
+            <span class="sec-opt-tag" onclick="toggleOpt(this)">5 fotos grid</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-item sel" data-sec="problema" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">😣</span>
+          <div class="sec-check">✓</div>
+        </div>
+        <div class="sec-name">Problema</div>
+        <div class="sec-desc">Dolor del cliente + imagen</div>
+      </div>
+
+      <div class="sec-item sel" data-sec="beneficios" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">✨</span>
+          <div class="sec-check">✓</div>
+        </div>
+        <div class="sec-name">Beneficios</div>
+        <div class="sec-desc">Lista de ventajas del producto</div>
+        <div class="sec-options" onclick="e=>e.stopPropagation()">
+          <div class="sec-opt-label">Estilo</div>
+          <div class="sec-opt-tags">
+            <span class="sec-opt-tag sel" onclick="toggleOpt(this)">Grid con emoji</span>
+            <span class="sec-opt-tag" onclick="toggleOpt(this)">Acordeón</span>
+            <span class="sec-opt-tag" onclick="toggleOpt(this)">Lista simple</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-item sel" data-sec="como_funciona" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">⚙️</span>
+          <div class="sec-check">✓</div>
+        </div>
+        <div class="sec-name">Cómo funciona</div>
+        <div class="sec-desc">Pasos 1, 2, 3</div>
+      </div>
+
+      <div class="sec-item sel" data-sec="testimonios" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">⭐</span>
+          <div class="sec-check">✓</div>
+        </div>
+        <div class="sec-name">Reviews</div>
+        <div class="sec-desc">Testimonios con foto de clientes</div>
+        <div class="sec-options" onclick="e=>e.stopPropagation()">
+          <div class="sec-opt-label">Estilo</div>
+          <div class="sec-opt-tags">
+            <span class="sec-opt-tag sel" onclick="toggleOpt(this)">Carrusel</span>
+            <span class="sec-opt-tag" onclick="toggleOpt(this)">Grid</span>
+            <span class="sec-opt-tag" onclick="toggleOpt(this)">Lista</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-item sel" data-sec="garantia" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">🛡️</span>
+          <div class="sec-check">✓</div>
+        </div>
+        <div class="sec-name">Garantía</div>
+        <div class="sec-desc">Sello de confianza y devolución</div>
+      </div>
+
+      <div class="sec-item sel" data-sec="faq" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">❓</span>
+          <div class="sec-check">✓</div>
+        </div>
+        <div class="sec-name">FAQ</div>
+        <div class="sec-desc">Preguntas frecuentes desplegables</div>
+      </div>
+
+      <div class="sec-item" data-sec="video" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">🎥</span>
+          <div class="sec-check"></div>
+        </div>
+        <div class="sec-name">Video</div>
+        <div class="sec-desc">Video del producto incrustado</div>
+      </div>
+
+      <div class="sec-item sel" data-sec="cta_final" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">🛒</span>
+          <div class="sec-check">✓</div>
+        </div>
+        <div class="sec-name">CTA Final</div>
+        <div class="sec-desc">Cierre con urgencia y botón de compra</div>
+        <div class="sec-options" onclick="e=>e.stopPropagation()">
+          <div class="sec-opt-label">Estrategias</div>
+          <div class="sec-opt-tags">
+            <span class="sec-opt-tag sel" onclick="toggleOpt(this)">Contador stock</span>
+            <span class="sec-opt-tag sel" onclick="toggleOpt(this)">WhatsApp btn</span>
+            <span class="sec-opt-tag" onclick="toggleOpt(this)">Campo ciudad</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="sec-item" data-sec="popup_social" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">🔔</span>
+          <div class="sec-check"></div>
+        </div>
+        <div class="sec-name">Popup social</div>
+        <div class="sec-desc">"María de Quito acaba de comprar"</div>
+      </div>
+
+      <div class="sec-item" data-sec="comparacion" onclick="toggleSec(this)">
+        <div class="sec-item-top">
+          <span class="sec-icon">⚖️</span>
+          <div class="sec-check"></div>
+        </div>
+        <div class="sec-name">Comparación</div>
+        <div class="sec-desc">Nosotros vs. la competencia</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== PANEL 4: ESTILO ===== -->
+  <div class="panel" id="panel4">
+    <div class="panel-title">Estilo y tono</div>
+    <div class="panel-sub">Elige cómo quieres que suene el copy y se vea la landing.</div>
+
+    <div class="field">
+      <label>Tono del copy</label>
+      <div class="tono-grid">
+        <div class="tono-item sel" onclick="selTono(this)" data-tono="confianza">
+          <div class="tono-emoji">🤝</div>
+          <div class="tono-name">Confianza</div>
+          <div class="tono-desc">Cercano y seguro</div>
+        </div>
+        <div class="tono-item" onclick="selTono(this)" data-tono="urgencia">
+          <div class="tono-emoji">⚡</div>
+          <div class="tono-name">Urgencia</div>
+          <div class="tono-desc">Escasez y acción</div>
+        </div>
+        <div class="tono-item" onclick="selTono(this)" data-tono="premium">
+          <div class="tono-emoji">💎</div>
+          <div class="tono-name">Premium</div>
+          <div class="tono-desc">Aspiracional</div>
+        </div>
+        <div class="tono-item" onclick="selTono(this)" data-tono="tecnico">
+          <div class="tono-emoji">🔬</div>
+          <div class="tono-name">Técnico</div>
+          <div class="tono-desc">Detallado y preciso</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Color principal de la landing</label>
+      <div class="tags-wrap">
+        <div class="tag sel" onclick="selTag(this,'color')" data-val="#1D9E75">🟢 Verde (default)</div>
+        <div class="tag" onclick="selTag(this,'color')" data-val="#E24B4A">🔴 Rojo energía</div>
+        <div class="tag" onclick="selTag(this,'color')" data-val="#3B82F6">🔵 Azul confianza</div>
+        <div class="tag" onclick="selTag(this,'color')" data-val="#7C3AED">🟣 Morado premium</div>
+        <div class="tag" onclick="selTag(this,'color')" data-val="#EF9F27">🟡 Naranja urgencia</div>
+        <div class="tag" onclick="selTag(this,'color')" data-val="#111111">⚫ Negro luxury</div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label>Instrucciones adicionales para la IA <span style="color:var(--gris);font-weight:400">(opcional)</span></label>
+      <textarea id="instrucciones" placeholder="ej. El producto es para mujeres de 25-45 años. Menciona que es importado de Japón. Usa el término 'bivouac' para referirte a los clientes..."></textarea>
+      <div class="hint">Cualquier detalle extra que quieras que la IA tenga en cuenta.</div>
+    </div>
+  </div>
+
+  <!-- ===== PANEL 5: RESUMEN ===== -->
+  <div class="panel" id="panel5">
+    <div class="panel-title">Listo para generar</div>
+    <div class="panel-sub">Revisa tu configuración antes de lanzar la IA.</div>
+
+    <div class="summary-card">
+      <h4>Producto</h4>
+      <div class="sum-row"><span>Nombre</span><span id="sum-nombre">—</span></div>
+      <div class="sum-row"><span>Precio</span><span id="sum-precio">—</span></div>
+      <div class="sum-row"><span>Mercado</span><span id="sum-mercado">—</span></div>
+      <div class="sum-row"><span>Nicho</span><span id="sum-nicho">—</span></div>
+    </div>
+
+    <div class="summary-card">
+      <h4>Imágenes</h4>
+      <div class="sum-row"><span>Fotos hero</span><span id="sum-hero-imgs">—</span></div>
+      <div class="sum-row"><span>Foto problema</span><span id="sum-problema-img">—</span></div>
+      <div class="sum-row"><span>Fotos clientes</span><span id="sum-review-imgs">—</span></div>
+      <div class="sum-row"><span>Video</span><span id="sum-video">—</span></div>
+    </div>
+
+    <div class="summary-card">
+      <h4>Secciones activas</h4>
+      <div class="secs-preview" id="sum-secciones"></div>
+    </div>
+
+    <div class="summary-card">
+      <h4>Estilo</h4>
+      <div class="sum-row"><span>Tono</span><span id="sum-tono">—</span></div>
+      <div class="sum-row"><span>Color</span><span id="sum-color">—</span></div>
+    </div>
+  </div>
+
+  <!-- ===== GENERANDO ===== -->
+  <div class="panel" id="panelGen">
+    <div class="gen-wrap">
+      <div class="gen-spinner"></div>
+      <div class="gen-title">Generando tu landing...</div>
+      <div class="gen-sub">La IA está trabajando en tu página de alta conversión</div>
+      <div class="progress-track">
+        <div class="progress-fill" id="progFill"></div>
+      </div>
+      <div class="gen-step" id="genStep">Iniciando...</div>
+    </div>
+  </div>
+
+  <!-- ===== ÉXITO ===== -->
+  <div class="panel" id="panelSuccess">
+    <div class="success-wrap">
+      <div class="success-icon">🎉</div>
+      <div class="success-title">¡Landing lista!</div>
+      <div class="success-sub">Tu página de alta conversión fue generada exitosamente con todas las secciones configuradas.</div>
+      <div class="result-actions">
+        <a href="#" class="act-btn primary" id="downloadBtn">⬇️ Descargar landing.html</a>
+        <button class="act-btn secondary" onclick="resetForm()">🔄 Generar otra landing</button>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /main -->
+
+<!-- NAV BOTTOM -->
+<div class="nav-bottom" id="navBottom">
+  <button class="btn-back" id="btnBack" onclick="goBack()" style="display:none">← Atrás</button>
+  <button class="btn-next" id="btnNext" onclick="goNext()" disabled>Siguiente →</button>
+</div>
+
+<script>
+// ===== ESTADO =====
+let currentStep = 1;
+const totalSteps = 5;
+let heroImgs = [];
+let reviewImgs = [];
+let problemaB64 = null;
+let selectedTono = 'confianza';
+let selectedColor = '#1D9E75';
+let selectedNicho = '';
+
+// ===== NAVEGACIÓN =====
+function goNext() {
+  if (currentStep === totalSteps) { startGeneration(); return; }
+  if (currentStep === totalSteps - 1) fillSummary();
+  setStep(currentStep + 1);
+}
+
+function goBack() {
+  if (currentStep > 1) setStep(currentStep - 1);
+}
+
+function setStep(n) {
+  document.getElementById('panel' + currentStep).classList.remove('active');
+  document.getElementById('panel' + n).classList.add('active');
+  currentStep = n;
+  updateProgress();
+  updateNav();
+  window.scrollTo(0, 0);
+}
+
+function updateProgress() {
+  for (let i = 1; i <= totalSteps; i++) {
+    const ps = document.getElementById('ps' + i);
+    const dot = document.getElementById('dot' + i);
+    const lbl = document.getElementById('lbl' + i);
+    ps.classList.remove('active', 'done');
+    lbl.classList.remove('active');
+    if (i < currentStep) { ps.classList.add('done'); dot.textContent = '✓'; }
+    else if (i === currentStep) { ps.classList.add('active'); dot.textContent = i; lbl.classList.add('active'); }
+    else { dot.textContent = i; }
+  }
+}
+
+function updateNav() {
+  const btnBack = document.getElementById('btnBack');
+  const btnNext = document.getElementById('btnNext');
+  btnBack.style.display = currentStep > 1 ? 'block' : 'none';
+  if (currentStep === totalSteps) {
+    btnNext.textContent = '🚀 Generar landing';
+    btnNext.disabled = false;
+  } else {
+    btnNext.textContent = 'Siguiente →';
+    btnNext.disabled = currentStep === 1 && !isP1Valid();
+  }
+}
+
+// ===== VALIDACIÓN P1 =====
+function isP1Valid() {
+  return document.getElementById('nombre').value.trim() &&
+         document.getElementById('precio').value.trim() &&
+         document.getElementById('descripcion').value.trim();
+}
+
+function checkP1() {
+  document.getElementById('btnNext').disabled = !isP1Valid();
+}
+
+// ===== TAGS =====
+function selTag(el, group) {
+  document.querySelectorAll(`#nichoTags .tag, .tags-wrap .tag`).forEach(t => {
+    if (t.closest('.tags-wrap') === el.closest('.tags-wrap')) t.classList.remove('sel');
+  });
+  el.classList.add('sel');
+  if (group === 'nicho') selectedNicho = el.textContent.replace(/[^\w\s]/g,'').trim();
+  if (group === 'color') selectedColor = el.dataset.val || '#1D9E75';
+}
+
+// ===== TONO =====
+function selTono(el) {
+  document.querySelectorAll('.tono-item').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  selectedTono = el.dataset.tono;
+}
+
+// ===== SECCIONES =====
+function toggleSec(el) {
+  el.classList.toggle('sel');
+  const check = el.querySelector('.sec-check');
+  check.textContent = el.classList.contains('sel') ? '✓' : '';
+}
+
+function toggleOpt(el) {
+  el.classList.toggle('sel');
+  event.stopPropagation();
+}
+
+// ===== IMÁGENES HERO =====
+function handleHeroImgs(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    if (heroImgs.length >= 5) return;
+    const reader = new FileReader();
+    reader.onload = ev => {
+      heroImgs.push(ev.target.result);
+      renderHeroGrid();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderHeroGrid() {
+  const grid = document.getElementById('heroGrid');
+  grid.innerHTML = heroImgs.map((src, i) =>
+    `<div class="img-thumb">
+      <img src="${src}" alt="Hero ${i+1}">
+      <button class="rm" onclick="removeHeroImg(${i})">×</button>
+    </div>`
+  ).join('');
+  document.getElementById('addMoreBtn').style.display = heroImgs.length > 0 && heroImgs.length < 5 ? 'block' : 'none';
+}
+
+function removeHeroImg(i) {
+  heroImgs.splice(i, 1);
+  renderHeroGrid();
+}
+
+// ===== IMAGEN PROBLEMA =====
+function handleSingleImg(e, zoneId, previewId, b64Var) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    problemaB64 = ev.target.result;
+    document.getElementById('problemaImg').src = ev.target.result;
+    document.getElementById('problemaPreview').style.display = 'block';
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImg(previewId, b64Var) {
+  document.getElementById(previewId).style.display = 'none';
+  problemaB64 = null;
+}
+
+// ===== IMÁGENES REVIEWS =====
+function handleReviewImgs(e) {
+  const files = Array.from(e.target.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      reviewImgs.push(ev.target.result);
+      renderReviewGrid();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function renderReviewGrid() {
+  const grid = document.getElementById('reviewGrid');
+  grid.innerHTML = reviewImgs.map((src, i) =>
+    `<div class="img-thumb">
+      <img src="${src}" alt="Review ${i+1}">
+      <button class="rm" onclick="removeReviewImg(${i})">×</button>
+    </div>`
+  ).join('');
+}
+
+function removeReviewImg(i) {
+  reviewImgs.splice(i, 1);
+  renderReviewGrid();
+}
+
+// Drag & drop
+function dragOver(e, id) { e.preventDefault(); document.getElementById(id).classList.add('drag'); }
+function dragLeave(id) { document.getElementById(id).classList.remove('drag'); }
+function dropFiles(e, type) {
+  e.preventDefault();
+  dragLeave(type === 'hero' ? 'heroZone' : 'reviewZone');
+  const files = Array.from(e.dataTransfer.files);
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = ev => {
+      if (type === 'hero' && heroImgs.length < 5) { heroImgs.push(ev.target.result); renderHeroGrid(); }
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+// ===== RESUMEN =====
+function fillSummary() {
+  document.getElementById('sum-nombre').textContent = document.getElementById('nombre').value || '—';
+  document.getElementById('sum-precio').textContent = document.getElementById('precio').value || '—';
+  document.getElementById('sum-mercado').textContent = document.getElementById('mercado').value || '—';
+  document.getElementById('sum-nicho').textContent = selectedNicho || 'No seleccionado';
+  document.getElementById('sum-hero-imgs').textContent = heroImgs.length > 0 ? `${heroImgs.length} foto(s) subida(s)` : 'Generadas por IA';
+  document.getElementById('sum-problema-img').textContent = problemaB64 ? 'Subida ✓' : 'Generada por IA';
+  document.getElementById('sum-review-imgs').textContent = reviewImgs.length > 0 ? `${reviewImgs.length} foto(s)` : 'Generadas por IA';
+  document.getElementById('sum-video').textContent = document.getElementById('video_url').value || 'Sin video';
+  document.getElementById('sum-tono').textContent = selectedTono;
+  document.getElementById('sum-color').textContent = selectedColor;
+
+  const secs = Array.from(document.querySelectorAll('.sec-item.sel')).map(el => el.querySelector('.sec-name').textContent);
+  document.getElementById('sum-secciones').innerHTML = secs.map(s => `<span class="sec-pill">${s}</span>`).join('');
+}
+
+// ===== GENERAR =====
+async function startGeneration() {
+  // Ocultar todos los paneles y nav
+  for (let i = 1; i <= totalSteps; i++) document.getElementById('panel' + i).classList.remove('active');
+  document.getElementById('panelGen').classList.add('active');
+  document.getElementById('navBottom').style.display = 'none';
+
+  const genSteps = [
+    'Analizando tu producto...',
+    'Generando imágenes con IA...',
+    'Escribiendo el copy de conversión...',
+    'Armando las secciones...',
+    'Optimizando para móvil y PC...',
+    'Aplicando estrategias de conversión...',
+    'Ensamblando el HTML final...',
+    '¡Casi listo!'
+  ];
+
+  const fill = document.getElementById('progFill');
+  const stepEl = document.getElementById('genStep');
+  let i = 0;
+
+  const iv = setInterval(() => {
+    if (i >= genSteps.length) { clearInterval(iv); sendToN8n(); return; }
+    stepEl.textContent = genSteps[i];
+    fill.style.width = Math.round((i + 1) / genSteps.length * 100) + '%';
+    i++;
+  }, 900);
+}
+
+async function sendToN8n() {
+  const WEBHOOK_URL = 'https://generador.duallegacyideas.com/proxy.php';
+
+  const secciones = Array.from(document.querySelectorAll('.sec-item.sel')).map(el => el.dataset.sec);
+
+  const payload = {
+    nombre_producto: document.getElementById('nombre').value,
+    precio: document.getElementById('precio').value,
+    precio_antes: document.getElementById('precio_antes').value,
+    descripcion: document.getElementById('descripcion').value,
+    nicho: selectedNicho,
+    mercado: document.getElementById('mercado').value,
+    whatsapp: document.getElementById('whatsapp').value || 'TUNUMERO',
+    tono: selectedTono,
+    color_principal: selectedColor,
+    video_url: document.getElementById('video_url').value,
+    instrucciones: document.getElementById('instrucciones').value,
+    secciones_activas: secciones,
+    imagenes_hero: heroImgs.map(img => img.replace(/^data:image\/\w+;base64,/, '')),
+    imagen_problema: problemaB64 ? problemaB64.replace(/^data:image\/\w+;base64,/, '') : null,
+    imagenes_reviews: reviewImgs.map(img => img.replace(/^data:image\/\w+;base64,/, '')),
+    tiene_imagenes_hero: heroImgs.length > 0,
+    tiene_imagen_problema: !!problemaB64,
+    tiene_imagenes_reviews: reviewImgs.length > 0
+  };
+
+  try {
+    const res = await fetch(WEBHOOK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    // Maneja cualquier formato de respuesta
+    let html = '';
+    if (typeof data === 'string') {
+      html = data;
+    } else if (data.html) {
+      html = data.html;
+    } else if (Array.isArray(data) && data[0]?.html) {
+      html = data[0].html;
+    } else if (data[0]?.json?.html) {
+      html = data[0].json.html;
+    }
+    showSuccess(html);
+  } catch (err) {
+    console.error('Error:', err);
+    showSuccess(null);
+  }
+}
+
+function showSuccess(html) {
+  document.getElementById('panelGen').classList.remove('active');
+  document.getElementById('panelSuccess').classList.add('active');
+
+  if (html) {
+    const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const btn = document.getElementById('downloadBtn');
+    btn.href = url;
+    btn.download = 'landing_' + Date.now() + '.html';
+    btn.textContent = '⬇️ Descargar landing.html';
+    btn.onclick = null;
+  } else {
+    const btn = document.getElementById('downloadBtn');
+    btn.textContent = '⚠️ Error generando — intenta de nuevo';
+    btn.style.background = '#E24B4A';
+  }
+}
+
+function resetForm() {
+  location.reload();
+}
+
+// Init
+updateNav();
+</script>
+</body>
+</html>
