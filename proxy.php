@@ -2,15 +2,16 @@
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: POST, OPTIONS, GET');
 header('Access-Control-Allow-Headers: Content-Type');
-header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    header('Content-Type: application/json');
     exit(0);
 }
 
 $data = file_get_contents('php://input');
 
 if (empty($data)) {
+    header('Content-Type: application/json');
     echo json_encode(['status' => 'proxy ok']);
     exit(0);
 }
@@ -20,8 +21,12 @@ curl_setopt($ch, CURLOPT_POST, 1);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $data);
 curl_setopt($ch, CURLOPT_HTTPHEADER, ['Content-Type: application/json']);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_TIMEOUT, 120);
+curl_setopt($ch, CURLOPT_TIMEOUT, 180);
+curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
 $response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
 curl_close($ch);
 
+header('Content-Type: application/json');
+header('X-HTTP-Code: ' . $httpCode);
 echo $response;
